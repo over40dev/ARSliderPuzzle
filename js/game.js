@@ -28,17 +28,37 @@
     takePhotoButton.addEventListener('click', getPicture);
   }
 
-  // Get a video stream from teh camera
   const getStream = () => {
 
+    // Get a video stream from teh camera
+    if (mediaStream) {
+      mediaStream
+        .getTracks()
+        .forEach(track => track.stop())
+    }
+
+    constraints = {
+      video: {
+        width: 720,
+        height: 720
+      }
+    };
+
+    navigator
+      .mediaDevices
+      .getUserMedia(contraints)
+      .catch(error => console.log('getUserMedia error: ', error))
+      .then(gotStream);
   }
 
+  // Display the stream fromthe camera, and then create an ImageCapture object, using video from the stream
   const gotStream = (stream) => {
-
+    mediaStream = stream;
+    video.srcObject = stream;
+    imageCapture = new imageCapture(stream.getVideoTracks()[0])
   }
 
+  // Take the Picture
   const getPicture = () => {
-    
   }
-
 }
