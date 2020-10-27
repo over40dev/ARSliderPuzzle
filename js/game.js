@@ -60,5 +60,15 @@
 
   // Take the Picture
   const getPicture = () => {
+    imageCapture.takePhoto()
+      .catch(error => console.log('takePhoto() error: ', error))
+      .then((img) => {
+        image.src = URL.createObjectURL(img);
+        image.addEventListener('load', () => createImagePieces(image));
+        setInterval(() => checkDistance(), 1000);
+      });
   }
+
+  const createImagePieces = (image) => {};
+  const checkDistance = () => {};
 }
