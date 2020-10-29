@@ -1,16 +1,21 @@
 {
-  const
-    // image is new set to a new Image Object
-    image = new Image(),
-    // Get a reference to the HTML Take Photo Button by selecting the first DOM
-    // element with a CLASS of 'takePhoto'. The  ` . ` before the Class Name tells
-    // the selector that the name that follows the  ` . `  is a Class.
-    takePhotoButton = document.querySelector('.takePhoto');
+  // image is new set to a new Image Object
+  const image = new Image();
+  // Get a reference to the HTML Take Photo Button by selecting the first DOM
+  // element with a CLASS of 'takePhoto'. The  ` . ` before the Class Name tells
+  // the selector that the name that follows the  ` . `  is a Class.
+  const takePhotoButton = document.querySelector('.takePhoto');
 
-  let contraints,
-    imageCapture,
-    mediaStream,
-    video;
+  let contraints, imageCapture, mediaStream, video;
+
+  // Puzzle Variables
+  let numCol = 3, numRow = 3;
+  const puzzlePieces = numCol * numRow;
+  const imagePieces = new Array(puzzlePieces);
+  const markers = document.querySelectorAll('a-marker');
+
+  // let puzzle = [...Array(puzzlePieces).keys()].map(String);
+
   /**
  *Get a list of the available media input and output devices, such as microphones, cameras, headsets, and so forth, using the  ` MediaDevices.enumerateDevices() `  function.  This function returns a **JS Promise**. We use the **catch** in case an error causes the operation to **rejects**.  We use a **then** to process the array of media devices if is successfully return.
  */
@@ -51,7 +56,7 @@
       .then(gotStream);
   }
 
-  // Display the stream fromthe camera, and then create an ImageCapture object, using video from the stream
+  /** Display the stream fromthe camera, and then create an ImageCapture object, using video from the stream */
   const gotStream = (stream) => {
     mediaStream = stream;
     video.srcObject = stream;
@@ -69,6 +74,26 @@
       });
   }
 
-  const createImagePieces = (image) => {};
-  const checkDistance = () => {};
+  const createImagePieces = (image) => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const pieceWidth = image.width / numCol;
+    const pieceHeight = image.height / numRow;
+
+    for (let x = 0; x < numCol; x++) {
+      for (let y = 0; y < numRow; y++) {
+        // 
+        ctx.drawImage(
+          image, 
+          x * pieceWidth, 
+          y * pieceHeight,
+          pieceWidth,
+          pieceHeight,
+          0,
+          0,
+          canvas.width,
+          canvas.height);
+      }
+    }
+  };
 }
