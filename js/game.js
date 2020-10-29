@@ -111,4 +111,6 @@
       marker.appendChild(aImg);
     });
   };
+
+  window.addEventListener('load', () => init());
 }
