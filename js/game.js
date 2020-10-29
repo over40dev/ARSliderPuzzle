@@ -10,12 +10,13 @@
 
   const takePhotoButton = document.querySelector('.takePhoto');
 
-  let contraints, imageCapture, mediaStream, video;
+  let constraints, imageCapture, mediaStream, video;
 
   // Puzzle Variables
   let numCol = 3, numRow = 3;
-  const puzzlePieces = numCol * numRow;
-  const imagePieces = new Array(puzzlePieces);
+  // const puzzlePieces = numCol * numRow;
+  const imagePieces = [];
+  // const imagePieces = new Array(puzzlePieces);
   const markers = document.querySelectorAll('a-marker');
 
   /**
@@ -26,9 +27,8 @@
     // Scene using the embedded arjs properties
     video = document.querySelector('video');
 
-    navigator
-      .mediaDevices
-      .enmerateDevices()
+    navigator.mediaDevices
+      .enumerateDevices()
       .catch(error => console.log('enmerateDevices() error', error))
       .then(getStream);
 
@@ -36,34 +36,33 @@
   }
 
   const getStream = () => {
-
     // Get a video stream from teh camera
     if (mediaStream) {
       mediaStream
         .getTracks()
-        .forEach(track => track.stop())
+        .forEach(track => track.stop());
     }
 
-    constraints = {
-      video: {
-        width: 720,
-        height: 720
-      }
-    };
+		constraints = {
+			video: {
+				width: 720,
+				height: 720,
+			}
+		};
 
-    navigator
-      .mediaDevices
-      .getUserMedia(contraints)
-      .catch(error => console.log('getUserMedia error: ', error))
-      .then(gotStream);
-  }
+		navigator.mediaDevices.getUserMedia(constraints)
+			.then(gotStream)
+			.catch(error => {
+				console.log('getUserMedia error', error);
+			});
+  };
 
   /** Display the stream fromthe camera, and then create an ImageCapture object, using video from the stream */
   const gotStream = (stream) => {
     mediaStream = stream;
     video.srcObject = stream;
-    imageCapture = new imageCapture(stream.getVideoTracks()[0])
-  }
+    imageCapture = new ImageCapture(stream.getVideoTracks()[0])
+  };
 
   // Take the Picture
   const getPicture = () => {
@@ -72,7 +71,7 @@
       .then((img) => {
         image.src = URL.createObjectURL(img);
         image.addEventListener('load', () => createImagePieces(image));
-        setInterval(() => checkDistance(), 1000);
+        // setInterval(() => checkDistance(), 1000);
       });
   }
 
@@ -90,6 +89,7 @@
         let canvasImageSource = canvas.toDataURL('image/png');
         // convert canvas image format to a binary multimedia format (octet-stream)
         let imageSource = canvasImageSource.replace('image/png', 'image/octet-stream');
+        // console.log('imageSource', imageSource);
         // store binary multimedia formatted image in array
         imagePieces.push(imageSource);
         // console log during testing - remove from final code
@@ -112,5 +112,5 @@
     });
   };
 
-  window.addEventListener('load', () => init());
+  window.addEventListener(`load`, () => setTimeout(() => init(),5000));
 }
