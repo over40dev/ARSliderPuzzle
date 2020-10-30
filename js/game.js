@@ -86,10 +86,9 @@
         // draw image piece to canvas
         ctx.drawImage(image, x * pieceWidth, y * pieceHeight, pieceWidth, pieceHeight, 0, 0, canvas.width, canvas.height);
         // get image piece source from canvas in regular image format (png)
-        let canvasImageSource = canvas.toDataURL('image/png');
+        const canvasImageSource = canvas.toDataURL('image/png');
         // convert canvas image format to a binary multimedia format (octet-stream)
-        let imageSource = canvasImageSource.replace('image/png', 'image/octet-stream');
-        // console.log('imageSource', imageSource);
+        const imageSource = canvasImageSource.replace('image/png', 'image/octet-stream');
         // store binary multimedia formatted image in array
         imagePieces.push(imageSource);
         // console log during testing - remove from final code
@@ -107,7 +106,7 @@
       aImg.setAttribute('position', '0, 0, 0');
       // set a-image source using our image pieces array from above
       aImg.setAttribute('src', imagePieces[index]);
-      // add a-image element as child of a-marker element so it display on the actual screen
+      // add a-image element as child of a-marker element so it displays on the actual screen
       marker.appendChild(aImg);
     });
   };
