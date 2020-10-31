@@ -1,24 +1,18 @@
 {
-  // f08
-
-  /* Create Game-Level Variables */
-
-  // get reference to DOM HTML Button with Class of 'takePhoto'
+  /* Existing Game-Level Variables */
   const takePhotoButton = document.querySelector('.takePhoto');
-
-  /* Create 'init' Function | runs when page loads */
+  let video;
 
   const init = () => {
-    // get access to 'video element' which is added by 'AR.js' when it processes page.
     video = document.querySelector('video');
-    // returns an array of media devices including camera available to us
-    // if successful, call 'getStream' function
-    // if fails, calls error handler
+
+    // new code
+    /* returns an array of media devices including camera available to us. If successful, call 'getStream' function if fails, calls error handler */
     navigator.mediaDevices.enumerateDevices()
       .then(getStream)
       .error((error) => console.log('enumerateDevices() error: ', error));
 
-    /* take picture when user clicks 'takePhotoButton' by listening for 'click' event and running a function*/
+    /* take picture when user presses 'takePhotoButton' by listening for 'click' event and running a function */
     takePhotoButton.addEventListener('click', getPicture);
   }
 
