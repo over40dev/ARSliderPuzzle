@@ -1,10 +1,8 @@
 {
-  /* Existing Game-Level Variables */
   const takePhotoButton = document.querySelector('.takePhoto');
   let video;
-
-  // 09 | Add Game-Level Variables
   let mediaStream;
+  let imageCapture;
 
   const init = () => {
     video = document.querySelector('video');
@@ -13,11 +11,8 @@
       .error((error) => console.log('enumerateDevices() error: ', error));
     takePhotoButton.addEventListener('click', getPicture);
   }
-  
-  // 09 | new code
     
   const getStream = () => {
-    
     if (mediaStream) {
       mediaStream.getTracks().forEach((track) => track.stop());
     }
@@ -33,12 +28,12 @@
     .then(gotStream)
     .error((error) => console.log('getUserMedia() error: ', error));
   };
-    
-  // 09 | new code
 
   const gotStream = (stream) => {
-    
+    mediaStream = stream;
+    video.srcObject = stream;
+    imageCapture = new imageCapture(stream.getVideoTracks()[0]);
   };
 
-  window.addEventListener(`load`, () => setTimeout(() => init(), 1000));
+  window.addEventListener('load', () => setTimeout(() => init(), 1000));
 }
