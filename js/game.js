@@ -3,6 +3,8 @@
   let video;
   let mediaStream;
   let imageCapture;
+  // f10 - New Variable
+  const image = new Image();
 
   const init = () => {
     video = document.querySelector('video');
@@ -32,8 +34,21 @@
   const gotStream = (stream) => {
     mediaStream = stream;
     video.srcObject = stream;
-    imageCapture = new imageCapture(stream.getVideoTracks()[0]);
+    imageCapture = new ImageCapture(stream.getVideoTracks()[0]);
   };
 
+  // f10 - New Code
+  const getPicture = () => {
+    imageCapture.takePhoto()
+      .catch((error) => console.log('takePhoto() error: ', error))
+      .then((img) => {
+        image.src = URL.createObjectURL(img);
+        // f11 - New Code
+        image.addEventListener('load', () => createImagePieces(img));
+        // f12 - New Code
+        setInterval(() => checkDistance(), 1000);
+      });
+  };
+  
   window.addEventListener('load', () => setTimeout(() => init(), 1000));
 }
