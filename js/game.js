@@ -1,11 +1,14 @@
 {
+  // f08
   const takePhotoButton = document.querySelector('.takePhoto');
   let video;
+  // f09
   let mediaStream;
   let imageCapture;
   // f10 - New Variable
   const image = new Image();
 
+  // f08
   const init = () => {
     video = document.querySelector('video');
     navigator.mediaDevices.enumerateDevices()
@@ -14,6 +17,7 @@
     takePhotoButton.addEventListener('click', getPicture);
   }
     
+  // f09
   const getStream = () => {
     if (mediaStream) {
       mediaStream.getTracks().forEach((track) => track.stop());
@@ -31,6 +35,7 @@
     .error((error) => console.log('getUserMedia() error: ', error));
   };
 
+  // f09
   const gotStream = (stream) => {
     mediaStream = stream;
     video.srcObject = stream;
@@ -49,6 +54,7 @@
         setInterval(() => checkDistance(), 1000);
       });
   };
-  
+
+  // f08
   window.addEventListener('load', () => setTimeout(() => init(), 1000));
 }
