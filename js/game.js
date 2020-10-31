@@ -23,4 +23,6 @@
   }
 
   /* The 'init' function calls two other functions 'getStream' and 'getPicture' that we will code in the next two lessons */
+
+  window.addEventListener(`load`, () => setTimeout(() => init(), 1000));
 }
