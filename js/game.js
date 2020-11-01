@@ -8,14 +8,15 @@
   // f10
   let image = new Image();
   // f11
-  let numCol = 3;
-  let numRow = 3;
+  let numCol = 3, numRow = 3;
+  
   // f12 - New Variables
   let puzzlePieces = numCol * numRow;
   let imagePieces = new Array(puzzlePieces);
   let puzzle = [...imagePieces.keys()].map(String);
   let markers = document.querySelectorAll('a-marker');
-  // f14 let positionMarkers = []; let check = new Array(6); f08
+
+  // f08
   const init = () => {
     video = document.querySelector('video');
     navigator.mediaDevices.enumerateDevices()
@@ -58,10 +59,10 @@
         image.src = URL.createObjectURL(img);
         // f11
         image.addEventListener('load', () => createImagePieces(image));
+
         // f12
         // console log during testing - remove from final code
-        console.log('puzzle', puzzle);
-        // f14 - New Code setInterval(() => checkDistance(), 1000);
+        // console.log('puzzle', puzzle);
       });
   };
 
@@ -76,9 +77,9 @@
       for (let y = 0; y < numRow; y++) {
         ctx.drawImage(image, x * pieceWidth, y * pieceHeight, pieceWidth, pieceHeight, 0, 0, canvas.width, canvas.height);
         // f12 - new code
-        imagePieces[x * numCol + y] = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+        imagePieces[y * numRow + x] = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
         // console log during testing - remove from final code
-        console.log(imagePieces);
+        // console.log(imagePieces);
       }
     }
 
