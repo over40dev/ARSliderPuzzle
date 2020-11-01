@@ -9,42 +9,39 @@
   let image = new Image();
   // f11
   let numCol = 3, numRow = 3;
-  // f12
+  
+  // f12 - New Variables
   let puzzlePieces = numCol * numRow;
   let imagePieces = new Array(puzzlePieces);
   let puzzle = [...imagePieces.keys()].map(String);
   let markers = document.querySelectorAll('a-marker');
-  // f13 - New Variables
-
-  // f14
-  // let positionMarkers = [];
-  // let check = new Array(6);
 
   // f08
   const init = () => {
     video = document.querySelector('video');
     navigator.mediaDevices.enumerateDevices()
-      .then(getStream)
-      .error((error) => console.log('enumerateDevices() error: ', error));
+      .catch(error => console.log('enumerateDevices() error', error))
+      .then(getStream);
     takePhotoButton.addEventListener('click', getPicture);
   }
-    
   // f09
   const getStream = () => {
     if (mediaStream) {
       mediaStream.getTracks().forEach((track) => track.stop());
     }
-    
+
     const constraints = {
       video: {
         height: 720,
-        width: 720,
+        width: 720
       }
     };
-    
+
     navigator.mediaDevices.getUserMedia(constraints)
-    .then(gotStream)
-    .error((error) => console.log('getUserMedia() error: ', error));
+      .then(gotStream)
+      .catch((error) => {
+        console.log('getUserMedia() error: ', error);
+      });
   };
 
   // f09
@@ -53,7 +50,7 @@
     video.srcObject = stream;
     imageCapture = new ImageCapture(stream.getVideoTracks()[0]);
   };
-
+  
   // f10
   const getPicture = () => {
     imageCapture.takePhoto()
@@ -62,10 +59,10 @@
         image.src = URL.createObjectURL(img);
         // f11
         image.addEventListener('load', () => createImagePieces(image));
+
+        // f12
         // console log during testing - remove from final code
-        console.log('puzzle', puzzle);
-        // f14 - New Code
-        // setInterval(() => checkDistance(), 1000);
+        // console.log('puzzle', puzzle);
       });
   };
 
@@ -82,7 +79,7 @@
         // f12 - new code
         imagePieces[y * numRow + x] = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
         // console log during testing - remove from final code
-        console.log(imagePieces);
+        // console.log(imagePieces);
       }
     }
 
@@ -97,5 +94,5 @@
   }
 
   // f08
-  window.addEventListener('load', () => setTimeout(() => init(), 1000));
+  window.addEventListener('load', () => setTimeout(() => init(), 5000));
 }
