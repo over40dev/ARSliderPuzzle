@@ -6,14 +6,16 @@
   let mediaStream;
   let imageCapture;
   // f10
-  const image = new Image();
+  let image = new Image();
   // f11
   let numCol = 3, numRow = 3;
-  // f12 - New Variables
+  // f12
   let puzzlePieces = numCol * numRow;
   let imagePieces = new Array(puzzlePieces);
   let puzzle = [...imagePieces.keys()].map(String);
   let markers = document.querySelectorAll('a-marker');
+  // f13 - New Variables
+
   // f14
   // let positionMarkers = [];
   // let check = new Array(6);
@@ -59,10 +61,10 @@
       .then((img) => {
         image.src = URL.createObjectURL(img);
         // f11
-        image.addEventListener('load', () => createImagePieces(img));
+        image.addEventListener('load', () => createImagePieces(image));
         // console log during testing - remove from final code
         console.log('puzzle', puzzle);
-        // f12 - New Code
+        // f14 - New Code
         // setInterval(() => checkDistance(), 1000);
       });
   };
@@ -78,7 +80,7 @@
       for (let y = 0; y < numRow; y++) {
         ctx.drawImage(image, x * pieceWidth, y * pieceHeight, pieceWidth, pieceHeight, 0, 0, canvas.width, canvas.height);
         // f12 - new code
-        imagePieces[x * numCol + y] = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
+        imagePieces[y * numRow + x] = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
         // console log during testing - remove from final code
         console.log(imagePieces);
       }
@@ -90,8 +92,6 @@
       aImg.setAttribute('rotation', '-90, 0, 0');
       aImg.setAttribute('position', '0, 0, 0');
       aImg.setAttribute('src', imagePieces[puzzle[index]]);
-      console.log('marker (puzzle): ', index, puzzle[index], imagePieces[puzzle[index]]);
-      console.log('marker (without puzzle): ', index, puzzle[index], imagePieces[index]);
       marker.appendChild(aImg);
     });
   }
