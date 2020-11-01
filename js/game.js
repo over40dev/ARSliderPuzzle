@@ -6,43 +6,41 @@
   let mediaStream;
   let imageCapture;
   // f10
-  const image = new Image();
+  let image = new Image();
   // f11
-  let numCol = 3, numRow = 3;
+  let numCol = 3;
+  let numRow = 3;
   // f12 - New Variables
   let puzzlePieces = numCol * numRow;
   let imagePieces = new Array(puzzlePieces);
   let puzzle = [...imagePieces.keys()].map(String);
   let markers = document.querySelectorAll('a-marker');
-  // f14
-  // let positionMarkers = [];
-  // let check = new Array(6);
-
-  // f08
+  // f14 let positionMarkers = []; let check = new Array(6); f08
   const init = () => {
     video = document.querySelector('video');
     navigator.mediaDevices.enumerateDevices()
-      .then(getStream)
-      .error((error) => console.log('enumerateDevices() error: ', error));
+      .catch(error => console.log('enumerateDevices() error', error))
+      .then(getStream);
     takePhotoButton.addEventListener('click', getPicture);
   }
-    
   // f09
   const getStream = () => {
     if (mediaStream) {
       mediaStream.getTracks().forEach((track) => track.stop());
     }
-    
+
     const constraints = {
       video: {
         height: 720,
-        width: 720,
+        width: 720
       }
     };
-    
+
     navigator.mediaDevices.getUserMedia(constraints)
-    .then(gotStream)
-    .error((error) => console.log('getUserMedia() error: ', error));
+      .then(gotStream)
+      .catch((error) => {
+        console.log('getUserMedia() error: ', error);
+      });
   };
 
   // f09
@@ -51,7 +49,7 @@
     video.srcObject = stream;
     imageCapture = new ImageCapture(stream.getVideoTracks()[0]);
   };
-
+  
   // f10
   const getPicture = () => {
     imageCapture.takePhoto()
@@ -59,11 +57,11 @@
       .then((img) => {
         image.src = URL.createObjectURL(img);
         // f11
-        image.addEventListener('load', () => createImagePieces(img));
+        image.addEventListener('load', () => createImagePieces(image));
+        // f12
         // console log during testing - remove from final code
         console.log('puzzle', puzzle);
-        // f12 - New Code
-        // setInterval(() => checkDistance(), 1000);
+        // f14 - New Code setInterval(() => checkDistance(), 1000);
       });
   };
 
@@ -78,7 +76,7 @@
       for (let y = 0; y < numRow; y++) {
         ctx.drawImage(image, x * pieceWidth, y * pieceHeight, pieceWidth, pieceHeight, 0, 0, canvas.width, canvas.height);
         // f12 - new code
-        imagePieces[x * numCol + y] = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
+        imagePieces[x * numCol + y] = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
         // console log during testing - remove from final code
         console.log(imagePieces);
       }
@@ -90,12 +88,10 @@
       aImg.setAttribute('rotation', '-90, 0, 0');
       aImg.setAttribute('position', '0, 0, 0');
       aImg.setAttribute('src', imagePieces[puzzle[index]]);
-      console.log('marker (puzzle): ', index, puzzle[index], imagePieces[puzzle[index]]);
-      console.log('marker (without puzzle): ', index, puzzle[index], imagePieces[index]);
       marker.appendChild(aImg);
     });
   }
 
   // f08
-  window.addEventListener('load', () => setTimeout(() => init(), 1000));
+  window.addEventListener('load', () => setTimeout(() => init(), 5000));
 }
