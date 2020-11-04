@@ -61,7 +61,7 @@
   // f10
   const getPicture = () => {
     // f13
-    shuffle(puzzle);
+    // shuffle(puzzle);
     imageCapture.takePhoto()
       .catch((error) => console.log('takePhoto() error: ', error))
       .then((img) => {
