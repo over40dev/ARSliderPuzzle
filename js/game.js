@@ -15,7 +15,12 @@
   let puzzle = [...imagePieces.keys()].map(String);
   let markers = document.querySelectorAll('a-marker');
   // f13
-  // no new vars
+  /* no new vars */
+  // f14 - New Vars
+  let positionMarkers = [];
+  let tolerance = 1.9;
+  // f15
+  // let check = new Array(6);
 
   // f08
   const init = () => {
@@ -62,7 +67,8 @@
         image.src = URL.createObjectURL(img);
         // f11
         image.addEventListener('load', () => createImagePieces(image));
-
+        // f14
+        setInterval(() => checkDistance(), 1000);
         // f12
         // console log during testing - remove from final code
         console.log('puzzle', puzzle);
@@ -99,7 +105,7 @@
     });
   }
 
-  // f13 - New Code
+  // f13
   const shuffle = (randomArray) => {
     for (let i = randomArray.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -107,6 +113,29 @@
     }
     return randomArray;
   }
+
+  // f14 - New Code
+  const checkDistance = () => {
+    // f14 - step 1
+    for (let i = 0; i < markers.length; i++) {
+      positionMarkers[i] = markers[i].object3D;
+    }
+    // f14 - step 2
+    if ((positionMarkers[puzzle[0]].position.x - positionMarkers[puzzle[8]].position.x) !== 0) {
+      /* positions are available */
+      // f14 - step 3
+      for (let i = 0; i < numRow; i++) {
+        if (
+          Math.abs(positionMarkers[puzzle[0 + (3 * i)]].position.x 
+          - positionMarkers[puzzle[1 + (3 * i)]].position.x) < tolerance && 
+          Math.abs(positionMarkers[puzzle[1 + (3 * i)]].position.x - positionMarkers[puzzle[2 + (3 * i)]].position.x) < tolerance && 
+          Math.abs(positionMarkers[puzzle[0 + (3 * i)]].rotation.x - positionMarkers[puzzle[1 + (3 * i)]].rotation.x) < tolerance && 
+          Math.abs(positionMarkers[puzzle[1 + (3 * i)]].rotation.x - positionMarkers[puzzle[2 + (3 * i)]].rotation.x) < tolerance) {
+        }
+      }
+    }
+  }
+  
 
   // f08
   window.addEventListener('load', () => setTimeout(() => init(), 5000));
