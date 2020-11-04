@@ -11,16 +11,17 @@
   let numCol = 3, numRow = 3;
   // f12
   let puzzlePieces = numCol * numRow;
+  let pieces = puzzlePieces - 1;
   let imagePieces = new Array(puzzlePieces);
   let puzzle = [...imagePieces.keys()].map(String);
   let markers = document.querySelectorAll('a-marker');
   // f13
   /* no new vars */
-  // f14 - New Vars
+  // f14
   let positionMarkers = [];
   let tolerance = 1.9;
-  // f15
-  // let check = new Array(6);
+  // f15 - New Variable
+  let check = new Array(6);
 
   // f08
   const init = () => {
@@ -114,16 +115,14 @@
     return randomArray;
   }
 
-  // f14 - New Code
+  // f14 
   const checkDistance = () => {
-    // f14 - step 1
+    // f14
     for (let i = 0; i < markers.length; i++) {
       positionMarkers[i] = markers[i].object3D;
     }
-    // f14 - step 2
+    // f14
     if ((positionMarkers[puzzle[0]].position.x - positionMarkers[puzzle[8]].position.x) !== 0) {
-      /* positions are available */
-      // f14 - step 3
       for (let i = 0; i < numRow; i++) {
         if (
           Math.abs(positionMarkers[puzzle[0 + (3 * i)]].position.x 
@@ -131,12 +130,39 @@
           Math.abs(positionMarkers[puzzle[1 + (3 * i)]].position.x - positionMarkers[puzzle[2 + (3 * i)]].position.x) < tolerance && 
           Math.abs(positionMarkers[puzzle[0 + (3 * i)]].rotation.x - positionMarkers[puzzle[1 + (3 * i)]].rotation.x) < tolerance && 
           Math.abs(positionMarkers[puzzle[1 + (3 * i)]].rotation.x - positionMarkers[puzzle[2 + (3 * i)]].rotation.x) < tolerance) {
+          // f15
+          check[i] = true;
+        } else {
+          check[i] = false;
         }
       }
+      
+      // f15
+      for (let i =0; i < numCol; ++i) {
+				if (
+          Math.abs(positionMarkers[puzzle[i]].position.y - positionMarkers[puzzle[3 + i]].position.y ) < tolerance &&
+          Math.abs(positionMarkers[puzzle[3 + i]].position.y - positionMarkers[puzzle[6 + i]].position.y ) < tolerance &&
+          Math.abs(positionMarkers[puzzle[i]].rotation.y - positionMarkers[puzzle[3 + i]].rotation.y ) < tolerance &&
+          Math.abs(positionMarkers[puzzle[3 + i]].rotation.y - positionMarkers[puzzle[6 + i]].rotation.y ) < tolerance) {
+					check[3+i] = true;
+				} else {
+					check[3+i] = false;
+				}
+			}
     }
-  }
-  
 
+    // f15 - New Code
+    if (check.every(puzzleCheck)) {
+      // console.log for testing purposes only; remove from final code
+      console.log('Solved!!!');
+      const solved = document.querySelector('.solved');
+      solved.style.display = 'flex';
+    }
+  };
+
+  // 15
+  const puzzleCheck = (check) => check === true;
+  
   // f08
   window.addEventListener('load', () => setTimeout(() => init(), 5000));
 }
