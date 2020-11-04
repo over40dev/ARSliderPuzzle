@@ -1,80 +1,82 @@
 {
-  // image is new set to a new Image Object
-  const image = new Image();
-  /**
-  *Get a reference to the HTML Take Photo Button by selecting
-   the first DOM element with a CLASS of 'takePhoto'. The  ` . 
-   ` before the Class Name tells the selector that the name 
-   that follows the  ` . `  is a Class.
-*/
-
+  // f08
   const takePhotoButton = document.querySelector('.takePhoto');
-
-  let constraints, imageCapture, mediaStream, video;
-
-  // Puzzle Variables
+  let video;
+  // f09
+  let mediaStream;
+  let imageCapture;
+  // f10
+  let image = new Image();
+  // f11
   let numCol = 3, numRow = 3;
-  // const puzzlePieces = numCol * numRow;
-  const imagePieces = [];
-  // const imagePieces = new Array(puzzlePieces);
-  const markers = document.querySelectorAll('a-marker');
+  // f12
+  let puzzlePieces = numCol * numRow;
+  let pieces = puzzlePieces - 1;
+  let imagePieces = new Array(puzzlePieces);
+  let puzzle = [...imagePieces.keys()].map(String);
+  let markers = document.querySelectorAll('a-marker');
+  // f13
+  /* no new vars */
+  // f14
+  let positionMarkers = [];
+  let tolerance = 1.9;
+  // f15 - New Variable
+  let check = new Array(6);
 
-  /**
- *Get a list of the available media input and output devices, such as microphones, cameras, headsets, and so forth, using the  ` MediaDevices.enumerateDevices() `  function.  This function returns a **JS Promise**. We use the **catch** in case an error causes the operation to **rejects**.  We use a **then** to process the array of media devices if is successfully return.
- */
+  // f08
   const init = () => {
-    // From our HTML file, pull the AR.js video which is created within the A-Frame
-    // Scene using the embedded arjs properties
     video = document.querySelector('video');
-
-    navigator.mediaDevices
-      .enumerateDevices()
-      .catch(error => console.log('enmerateDevices() error', error))
+    navigator.mediaDevices.enumerateDevices()
+      .catch(error => console.log('enumerateDevices() error', error))
       .then(getStream);
-
     takePhotoButton.addEventListener('click', getPicture);
   }
-
+  // f09
   const getStream = () => {
-    // Get a video stream from teh camera
     if (mediaStream) {
-      mediaStream
-        .getTracks()
-        .forEach(track => track.stop());
+      mediaStream.getTracks().forEach((track) => track.stop());
     }
 
-		constraints = {
-			video: {
-				width: 720,
-				height: 720,
-			}
-		};
+    const constraints = {
+      video: {
+        height: 720,
+        width: 720
+      }
+    };
 
-		navigator.mediaDevices.getUserMedia(constraints)
-			.then(gotStream)
-			.catch(error => {
-				console.log('getUserMedia error', error);
-			});
+    navigator.mediaDevices.getUserMedia(constraints)
+      .then(gotStream)
+      .catch((error) => {
+        console.log('getUserMedia() error: ', error);
+      });
   };
 
-  /** Display the stream fromthe camera, and then create an ImageCapture object, using video from the stream */
+  // f09
   const gotStream = (stream) => {
     mediaStream = stream;
     video.srcObject = stream;
-    imageCapture = new ImageCapture(stream.getVideoTracks()[0])
+    imageCapture = new ImageCapture(stream.getVideoTracks()[0]);
   };
-
-  // Take the Picture
+  
+  // f10
   const getPicture = () => {
+    // f13
+    shuffle(puzzle);
     imageCapture.takePhoto()
-      .catch(error => console.log('takePhoto() error: ', error))
+      .catch((error) => console.log('takePhoto() error: ', error))
       .then((img) => {
         image.src = URL.createObjectURL(img);
+        // f11
         image.addEventListener('load', () => createImagePieces(image));
-        // setInterval(() => checkDistance(), 1000);
+        // f14
+        setInterval(() => checkDistance(), 1000);
+        // f12
+        // console log during testing - remove from final code
+        console.log('puzzle', puzzle);
       });
-  }
+  };
 
+  // f11
   const createImagePieces = (image) => {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
@@ -83,33 +85,84 @@
 
     for (let x = 0; x < numCol; x++) {
       for (let y = 0; y < numRow; y++) {
-        // draw image piece to canvas
         ctx.drawImage(image, x * pieceWidth, y * pieceHeight, pieceWidth, pieceHeight, 0, 0, canvas.width, canvas.height);
-        // get image piece source from canvas in regular image format (png)
-        const canvasImageSource = canvas.toDataURL('image/png');
-        // convert canvas image format to a binary multimedia format (octet-stream)
-        const imageSource = canvasImageSource.replace('image/png', 'image/octet-stream');
-        // store binary multimedia formatted image in array
-        imagePieces.push(imageSource);
-        // console log during testing - remove from final code
+        // f12
+        imagePieces[8 - pieces] = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
         console.log(imagePieces);
+        pieces = pieces - 3;
+        if (pieces < 0) {
+          pieces = (puzzlePieces - 1) + pieces;
+        }
       }
     }
 
-    // 12
     markers.forEach((marker, index) => {
-      // create HTML <a-image></a-image> tag
-      const aImg = document.createElement('a-image');
-      // set rotation attribute so image appears facing camera
+      const aImg = new document.createElement('a-image');
+
       aImg.setAttribute('rotation', '-90, 0, 0');
-      // set position attribute so image to be default x, y, z equal zero
       aImg.setAttribute('position', '0, 0, 0');
-      // set a-image source using our image pieces array from above
-      aImg.setAttribute('src', imagePieces[index]);
-      // add a-image element as child of a-marker element so it displays on the actual screen
+      aImg.setAttribute('src', imagePieces[puzzle[index]]);
       marker.appendChild(aImg);
     });
+  }
+
+  // f13
+  const shuffle = (randomArray) => {
+    for (let i = randomArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [randomArray[i], randomArray[j]] = [randomArray[j], randomArray[i]];
+    }
+    return randomArray;
+  }
+
+  // f14 
+  const checkDistance = () => {
+    // f14
+    for (let i = 0; i < markers.length; i++) {
+      positionMarkers[i] = markers[i].object3D;
+    }
+    // f14
+    if ((positionMarkers[puzzle[0]].position.x - positionMarkers[puzzle[8]].position.x) !== 0) {
+      for (let i = 0; i < numRow; i++) {
+        if (
+          Math.abs(positionMarkers[puzzle[0 + (3 * i)]].position.x 
+          - positionMarkers[puzzle[1 + (3 * i)]].position.x) < tolerance && 
+          Math.abs(positionMarkers[puzzle[1 + (3 * i)]].position.x - positionMarkers[puzzle[2 + (3 * i)]].position.x) < tolerance && 
+          Math.abs(positionMarkers[puzzle[0 + (3 * i)]].rotation.x - positionMarkers[puzzle[1 + (3 * i)]].rotation.x) < tolerance && 
+          Math.abs(positionMarkers[puzzle[1 + (3 * i)]].rotation.x - positionMarkers[puzzle[2 + (3 * i)]].rotation.x) < tolerance) {
+          // f15
+          check[i] = true;
+        } else {
+          check[i] = false;
+        }
+      }
+      
+      // f15
+      for (let i =0; i < numCol; ++i) {
+				if (
+          Math.abs(positionMarkers[puzzle[i]].position.y - positionMarkers[puzzle[3 + i]].position.y ) < tolerance &&
+          Math.abs(positionMarkers[puzzle[3 + i]].position.y - positionMarkers[puzzle[6 + i]].position.y ) < tolerance &&
+          Math.abs(positionMarkers[puzzle[i]].rotation.y - positionMarkers[puzzle[3 + i]].rotation.y ) < tolerance &&
+          Math.abs(positionMarkers[puzzle[3 + i]].rotation.y - positionMarkers[puzzle[6 + i]].rotation.y ) < tolerance) {
+					check[3+i] = true;
+				} else {
+					check[3+i] = false;
+				}
+			}
+    }
+
+    // f15 - New Code
+    if (check.every(puzzleCheck)) {
+      // console.log for testing purposes only; remove from final code
+      console.log('Solved!!!');
+      const solved = document.querySelector('.solved');
+      solved.style.display = 'flex';
+    }
   };
 
-  window.addEventListener(`load`, () => setTimeout(() => init(),5000));
+  // 15
+  const puzzleCheck = (check) => check === true;
+  
+  // f08
+  window.addEventListener('load', () => setTimeout(() => init(), 5000));
 }
